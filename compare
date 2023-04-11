@@ -1,0 +1,40 @@
+function updateDestinationSheet() {
+  const destinationSheetName = 'NOM_DE_LA_FEUILLE_DE_CALCUL_DESTINATION';
+  const destinationStartRow = 2; // La première ligne de données de la feuille de calcul de destination
+
+  var destinationSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(destinationSheetName);
+  if (!destinationSheet) {
+    throw new Error('Feuille de calcul destination introuvable');
+  }
+
+  var sourceData = getSourceData();
+  var destinationData = getDestinationData();
+
+  var sourceNumbers = sourceData.map(function(row) {
+    return row[1];
+  });
+
+  var newData = sourceData.filter(function(row) {
+    return !destinationData.some(function(dRow) {
+      return dRow[1] === row[1];
+    });
+  });
+
+  if (newData.length > 0) {
+    var numRows = newData.length;
+    var numCols = newData[0].length;
+
+    destinationSheet.getRange(destinationStartRow, 1, 0, numCols).insertRowsBefore(1, numRows);
+    destinationSheet.getRange(destinationStartRow, 1, numRows, numCols).setValues(newData);
+  }
+
+  var rowsToDelete = destinationData.filter(function(row) {
+    return row[1] !== '' && !sourceNumbers.includes(row[1]);
+  }).map(function(row) {
+    return destinationData.indexOf(row) + 1;
+  }).reverse();
+
+  rowsToDelete.forEach(function(rowIndex) {
+    destinationSheet.deleteRow(rowIndex);
+  });
+}
