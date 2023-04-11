@@ -1,0 +1,33 @@
+function compareSheetsByNumber() {
+  const sourceSheetId = 'ID_DE_LA_FEUILLE_DE_CALCUL_SOURCE';
+  const destinationSheetName = 'NOM_DE_LA_FEUILLE_DE_CALCUL_DESTINATION';
+
+  var destinationSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(destinationSheetName);
+  if (!destinationSheet) {
+    throw new Error('Feuille de calcul destination introuvable');
+  }
+
+  var sourceSheet = SpreadsheetApp.openById(sourceSheetId).getSheetByName('NOM_DE_LA_FEUILLE_SOURCE');
+
+  var sourceData = sourceSheet.getDataRange().getValues();
+  var destinationData = destinationSheet.getDataRange().getValues();
+
+  var sourceNumbers = sourceData.map(function(row) {
+    return row[1];
+  });
+
+  var destinationNumbers = destinationData.map(function(row) {
+    return row[1];
+  });
+
+  var missingInDestination = sourceNumbers.filter(function(number) {
+    return !destinationNumbers.includes(number);
+  });
+
+  var missingInSource = destinationNumbers.filter(function(number) {
+    return !sourceNumbers.includes(number);
+  });
+
+  Logger.log('Numéros manquants dans la feuille de calcul de destination : ' + missingInDestination.join(', '));
+  Logger.log('Numéros manquants dans la feuille de calcul source : ' + missingInSource.join(', '));
+}
