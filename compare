@@ -1,8 +1,11 @@
 function updateDestinationSheet() {
   const sourceSheetId = 'ID_DE_LA_FEUILLE_DE_CALCUL_SOURCE';
-  const sourceSheetName = 'NOM_DE_LA_FEUILLE_DE_CALCUL_SOURCE';
+  const sourceSheetName = 'NOM_DE_LA_FEUILLE_SOURCE';
   const destinationSheetName = 'NOM_DE_LA_FEUILLE_DE_CALCUL_DESTINATION';
-  const destinationStartRow = 2; // La première ligne de données de la feuille de calcul de destination
+  const startRow = 2; // La première ligne de données de la feuille de calcul source
+  const startColumn = 1; // La première colonne de données de la feuille de calcul source
+  const numRows = 0; // Le nombre de lignes de données à récupérer de la feuille de calcul source (0 pour toutes les lignes)
+  const numColumns = 11; // Le nombre de colonnes de données à récupérer de la feuille de calcul source
 
   var destinationSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(destinationSheetName);
   if (!destinationSheet) {
@@ -10,46 +13,11 @@ function updateDestinationSheet() {
   }
 
   var sourceSheet = SpreadsheetApp.openById(sourceSheetId).getSheetByName(sourceSheetName);
+  var sourceRange = sourceSheet.getRange(startRow, startColumn, numRows, numColumns);
+  var sourceData = sourceRange.getValues();
 
-  var sourceData = sourceSheet.getDataRange().getValues();
   var destinationData = destinationSheet.getDataRange().getValues();
 
-  // Récupère les numéros des lignes dans la feuille de calcul destination
-  var destinationNumbers = destinationData.map(function(row) {
-    return row[1];
-  });
-
-  // Récupère les lignes de la source qui ne sont pas déjà dans la destination
-  var newData = sourceData.filter(function(row) {
-    return !destinationNumbers.includes(row[1]);
-  });
-
-  // Ajoute les nouvelles lignes à la feuille de calcul destination
-  if (newData.length > 0) {
-    var numRows = newData.length;
-    var numCols = newData[0].length;
-    
-    newData.forEach(function(row) {
-      destinationSheet.insertRowBefore(destinationStartRow);
-      destinationSheet.getRange(destinationStartRow, 1, 1, numCols).setValues([row]);
-      destinationStartRow++;
-    });
-  }
-
-  // Supprime les lignes de la feuille de calcul destination qui ne sont plus dans la source
-  var rowsToDelete = destinationData.filter(function(row) {
-    return row[1] !== '' && !sourceData.some(function(sRow) {
-      return sRow[1] === row[1];
-    });
-  }).map(function(row) {
-    return destinationData.indexOf(row) + 1;
-  }).reverse();
-
-  rowsToDelete.forEach(function(rowIndex) {
-    destinationSheet.deleteRow(rowIndex);
-  });
-
-  // Met à jour les lignes existantes dans la feuille de calcul de destination avec les nouvelles données
   destinationData.forEach(function(destinationRow, destinationRowIndex) {
     var sourceRow = sourceData.find(function(row) {
       return row[1] === destinationRow[1];
@@ -57,7 +25,7 @@ function updateDestinationSheet() {
 
     if (sourceRow) {
       destinationRow.forEach(function(cell, cellIndex) {
-        if (cell !== sourceRow[cellIndex]) {
+        if (destinationRow[cellIndex] !== sourceRow[cellIndex]) {
           destinationSheet.getRange(destinationRowIndex + 1, cellIndex + 1).setValue(sourceRow[cellIndex]);
         }
       });
