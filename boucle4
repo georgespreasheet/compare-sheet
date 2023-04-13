@@ -1,0 +1,49 @@
+function updateDestinationSheet() {
+  var sourceSheetId = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"; // Remplacez par l'ID de la feuille source
+  var sourceSheetName = "Sheet1"; // Remplacez par le nom de la feuille source
+  var destinationSheetId = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"; // Remplacez par l'ID de la feuille destination
+  var destinationSheetName = "Sheet1"; // Remplacez par le nom de la feuille destination
+
+  var sourceSheet = SpreadsheetApp.openById(sourceSheetId).getSheetByName(sourceSheetName);
+  var sourceData = sourceSheet.getDataRange().getValues();
+
+  var destinationSheet = SpreadsheetApp.openById(destinationSheetId).getSheetByName(destinationSheetName);
+  var destinationData = destinationSheet.getDataRange().getValues();
+
+  var newData = [];
+
+  destinationData.forEach(function(destinationRow) {
+    var sourceRow = sourceData.find(function(row) {
+      return row[1] === destinationRow[1];
+    });
+    
+    if (sourceRow) {
+      destinationRow.forEach(function(cell, cellIndex) {
+        if (cell === '' || cell === 'À mettre à jour') {
+          destinationRow[cellIndex] = sourceRow[cellIndex];
+        }
+      });
+    }
+  });
+
+  sourceData.forEach(function(sourceRow) {
+    var destinationRow = destinationData.find(function(row) {
+      return row[1] === sourceRow[1];
+    });
+
+    if (!destinationRow) {
+      newData.push(sourceRow);
+    }
+  });
+
+  var destinationStartRow = destinationData.length + 1;
+  var numCols = destinationSheet.getLastColumn();
+
+  newData.forEach(function(row) {
+    destinationSheet.insertRowBefore(destinationStartRow);
+    destinationSheet.getRange(destinationStartRow, 1, 1, numCols).setValues([row.concat(['À mettre à jour'])]);
+    destinationStartRow++;
+  });
+
+  destinationSheet.getDataRange().setValues(destinationData);
+}
