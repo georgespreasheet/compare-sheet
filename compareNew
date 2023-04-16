@@ -1,32 +1,53 @@
-function comparerFeuilles() {
-  var sheetD = SpreadsheetApp.getActive().getSheetByName("D");
-  var sheetS = SpreadsheetApp.getActive().getSheetByName("S");
+function mettreAJourFeuilleDestination() {
+  var sheetSource = SpreadsheetApp.getActive().getSheetByName("Feuille Source");
+  var sheetDestination = SpreadsheetApp.getActive().getSheetByName("Feuille Destination");
 
-  var dataD = sheetD.getDataRange().getValues();
-  var dataS = sheetS.getDataRange().getValues();
+  var dataSource = sheetSource.getDataRange().getValues();
+  var dataDestination = sheetDestination.getDataRange().getValues();
 
   // Créer un tableau contenant les clés de chaque ligne de la feuille source
-  var keysS = dataS.map(function(row) {
+  var keysSource = dataSource.map(function(row) {
     return row.join(); // Convertir la ligne en chaîne de caractères pour pouvoir l'utiliser comme clé
   });
 
   // Filtrer les données de la feuille source pour ne conserver que les lignes avec une clé absente dans la feuille de destination
-  var dataFilteredS = dataS.filter(function(row) {
+  var dataToAdd = dataSource.filter(function(row) {
     var rowString = row.join(); // Convertir la ligne en chaîne de caractères pour pouvoir la comparer
-    return dataD.findIndex(function(dRow) {
+    return dataDestination.findIndex(function(dRow) {
       return dRow.join() === rowString;
     }) === -1;
   });
 
   // Ajouter les nouvelles lignes à la feuille de destination
-  sheetD.insertRowsAfter(sheetD.getLastRow(), dataFilteredS.length);
-  sheetD.getRange(sheetD.getLastRow() + 1, 1, dataFilteredS.length, dataFilteredS[0].length).setValues(dataFilteredS);
-  
-  // Supprimer les lignes absentes de la feuille source dans la feuille de destination
-  dataD.forEach(function(row, index) {
+  if (dataToAdd.length > 0) {
+    sheetDestination.insertRowsAfter(sheetDestination.getLastRow(), dataToAdd.length);
+    sheetDestination.getRange(sheetDestination.getLastRow() + 1, 1, dataToAdd.length, dataToAdd[0].length).setValues(dataToAdd);
+  }
+
+  // Filtrer les données de la feuille de destination pour ne conserver que les lignes avec une clé présente dans la feuille source
+  var dataFiltered = dataDestination.filter(function(row) {
     var rowString = row.join(); // Convertir la ligne en chaîne de caractères pour pouvoir la comparer
-    if (keysS.indexOf(rowString) === -1) {
-      sheetD.deleteRow(index + 1);
+    return keysSource.indexOf(rowString) !== -1;
+  });
+
+  // Supprimer les lignes absentes de la feuille source dans la feuille de destination
+  var rowsToDelete = [];
+  dataDestination.forEach(function(row, index) {
+    var rowString = row.join(); // Convertir la ligne en chaîne de caractères pour pouvoir la comparer
+    if (keysSource.indexOf(rowString) === -1) {
+      rowsToDelete.push(index + 1);
     }
   });
+  
+  if (rowsToDelete.length > 0) {
+    rowsToDelete.reverse().forEach(function(rowIndex) {
+      sheetDestination.deleteRow(rowIndex);
+    });
+  }
+
+  // Mettre à jour les lignes existantes dans la feuille de destination
+  if (dataFiltered.length > 0) {
+    sheetDestination.getDataRange().clearContent();
+    sheetDestination.getRange(1, 1, dataFiltered.length, dataFiltered[0].length).setValues(dataFiltered);
+  }
 }
