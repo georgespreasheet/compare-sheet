@@ -1,0 +1,29 @@
+function sendEmailWithAttachment() {
+  var fileId = "ID_DU_FICHIER_SPREADSHEET"; // Remplacer par l'ID du fichier spreadsheet
+  var file = DriveApp.getFileById(fileId);
+  
+  var recipient = "EMAIL_DU_DESTINATAIRE"; // Remplacer par l'adresse email du destinataire
+  var subject = "Sujet de l'email"; // Remplacer par le sujet de l'email
+  var body = "Contenu de l'email"; // Remplacer par le contenu de l'email
+  
+  // Récupérer le template HTML de l'email
+  var template = HtmlService.createTemplateFromFile("email");
+  template.body = body;
+  
+  // Créer l'email HTML à partir du template
+  var emailHtml = template.evaluate().getContent();
+  
+  // Créer l'objet Email contenant les informations de l'email
+  var email = {
+    to: recipient,
+    subject: subject,
+    htmlBody: emailHtml,
+    attachments: [file.getAs(MimeType.MICROSOFT_EXCEL)]
+  };
+  
+  // Envoyer l'email
+  GmailApp.sendEmail(email.to, email.subject, email.body, {
+    htmlBody: email.htmlBody,
+    attachments: email.attachments
+  });
+}
