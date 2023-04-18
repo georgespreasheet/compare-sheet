@@ -27,3 +27,11 @@ function sendEmailWithAttachment() {
     attachments: email.attachments
   });
 }
+var pdf = file.getAs(MimeType.PDF, {
+  'pageSize': 'A4',
+  'orientation': 'landscape',
+  'printBackground': true,
+  'printSelectionOnly': false,
+  'verticalAlignment': 'TOP'
+});
+
