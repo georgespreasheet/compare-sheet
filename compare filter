@@ -1,0 +1,36 @@
+function compareSheets() {
+  const sourceSheetId = 'ID_DE_LA_FEUILLE_SOURCE'; // ID de la feuille de calcul source
+  const destinationSheetName = 'NOM_DE_LA_FEUILLE_DESTINATION'; // Nom de la feuille de calcul destination
+  
+  const destinationSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(destinationSheetName);
+  if (!destinationSheet) {
+    throw new Error('Feuille de calcul destination introuvable');
+  }
+
+  const sourceSheet = SpreadsheetApp.openById(sourceSheetId).getActiveSheet();
+
+  const sourceRows = sourceSheet.getDataRange().getValues().map(function(row) {
+    return row[1]; // On ne compare que la colonne B
+  });
+  
+  const destinationRows = destinationSheet.getDataRange().getValues().map(function(row) {
+    return row[1]; // On ne compare que la colonne B
+  });
+
+  // Ajouter les lignes manquantes
+  const rowsToAdd = sourceRows.filter(function(sourceRow) {
+    return !destinationRows.includes(sourceRow);
+  });
+  rowsToAdd.forEach(function(rowToAdd) {
+    destinationSheet.appendRow([rowToAdd]);
+  });
+
+  // Supprimer les lignes en trop
+  const rowsToDelete = destinationRows.filter(function(destinationRow) {
+    return !sourceRows.includes(destinationRow);
+  });
+  rowsToDelete.forEach(function(rowToDelete) {
+    const rowIndex = destinationRows.indexOf(rowToDelete);
+    destinationSheet.deleteRow(rowIndex + 1);
+  });
+}
