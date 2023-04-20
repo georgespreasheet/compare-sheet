@@ -1,0 +1,10 @@
+for (var i = 0; i < destinationData.length; i++) {
+  var a = destinationData[i];
+  for (var j = 0; j < sourceData.length; j++) {
+    var c = sourceData[j];
+    if (a[0] + a[9] === c[0] + c[9]) {
+      var val = sourceSheet.getRange(j+2, 4).getValues();
+      destinationSheet.getRange(i+2, 4).setValues(val);
+    }
+  }
+}
