@@ -8,9 +8,19 @@ function compareFeuilles() {
   const valeurs1 = plage1.getValues();
   const valeurs2 = plage2.getValues();
   
-  if (JSON.stringify(valeurs1) === JSON.stringify(valeurs2)) {
+  var differences = [];
+  
+  for (var i = 0; i < valeurs1.length; i++) {
+    for (var j = 0; j < valeurs1[i].length; j++) {
+      if (valeurs1[i][j] !== valeurs2[i][j]) {
+        differences.push(`Cellule (${i+1},${j+1}) : Feuille1 = ${valeurs1[i][j]}, Feuille2 = ${valeurs2[i][j]}`);
+      }
+    }
+  }
+  
+  if (differences.length === 0) {
     Logger.log('Les feuilles sont identiques');
   } else {
-    Logger.log('Les feuilles sont différentes');
+    Logger.log(`Les feuilles sont différentes : \n${differences.join('\n')}`);
   }
 }
