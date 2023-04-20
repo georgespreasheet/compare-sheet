@@ -1,0 +1,16 @@
+function compareFeuilles() {
+  const feuille1 = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Feuille1');
+  const feuille2 = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Feuille2');
+  
+  const plage1 = feuille1.getDataRange();
+  const plage2 = feuille2.getDataRange();
+  
+  const valeurs1 = plage1.getValues();
+  const valeurs2 = plage2.getValues();
+  
+  if (JSON.stringify(valeurs1) === JSON.stringify(valeurs2)) {
+    Logger.log('Les feuilles sont identiques');
+  } else {
+    Logger.log('Les feuilles sont différentes');
+  }
+}
