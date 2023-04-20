@@ -24,3 +24,52 @@ function compareFeuilles() {
     Logger.log(`Les feuilles sont différentes : \n${differences.join('\n')}`);
   }
 }
+
+Les feuilles sont différentes : 
+Cellule (1,1) : 
+Cellule (1,2) : 
+Cellule (1,4) : 
+Cellule (1,5) : 
+Cellule (1,6) : 
+Cellule (1,7) : 
+Cellule (1,8) : 
+Cellule (1,9) : 
+Cellule (3,1) : 
+Cellule (3,2) : 
+Cellule (3,4) : 
+Cellule (3,5) : 
+Cellule (3,6) : 
+Cellule (3,7) : 
+Cellule (3,8) : 
+Cellule (3,9) : 
+Cellule (4,1) : 
+Cellule (4,4) : 
+Cellule (4,5) : 
+Cellule (4,6) : 
+Cellule (4,7) : 
+Cellule (4,8) : 
+Cellule (4,9) : 
+Cellule (5,1) : 
+Cellule (5,2) : 
+Cellule (5,4) : 
+Cellule (5,5) : 
+Cellule (5,6) : 
+Cellule (5,7) : 
+Cellule (5,8) : 
+Cellule (5,9) : 
+Cellule (30,1) :
+Cellule (30,5) :
+Cellule (30,6) :
+Cellule (30,7) :
+Cellule (30,9) :
+Cellule (30,10) 
+Cellule (31,1) :
+Cellule (31,2) :
+Cellule (31,3) :
+Cellule (31,4) :
+Cellule (31,5) :
+Cellule (31,6) :
+Cellule (31,7) :
+Cellule (31,8) :
+Cellule (31,9) :
+Cellule (31,10) 
