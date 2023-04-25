@@ -1,0 +1,47 @@
+function updateSheetA() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheetA = ss.getSheetByName("SheetA");
+  var sheetB = ss.getSheetByName("SheetB");
+
+  var lastRowA = sheetA.getLastRow() - 1; // -1 pour exclure la première ligne
+  var lastRowB = sheetB.getLastRow() - 1; // -1 pour exclure la première ligne
+
+  var dataA = sheetA.getRange(2, 2, lastRowA, 10).getValues();
+  var dataB = sheetB.getRange(2, 2, lastRowB, 10).getValues();
+
+  // Supprimer les lignes de SheetA qui ne sont pas dans SheetB
+  for (var i = dataA.length - 1; i >= 0; i--) {
+    var rowA = dataA[i];
+    var foundInB = false;
+
+    for (var j = 0; j < dataB.length; j++) {
+      var rowB = dataB[j];
+      if (JSON.stringify(rowA) === JSON.stringify(rowB)) {
+        foundInB = true;
+        break;
+      }
+    }
+
+    if (!foundInB) {
+      sheetA.deleteRow(i + 2); // +2 pour prendre en compte la première ligne et le décalage de l'index
+    }
+  }
+
+  // Ajouter les lignes de SheetB qui ne sont pas dans SheetA
+  for (var i = 0; i < dataB.length; i++) {
+    var rowB = dataB[i];
+    var foundInA = false;
+
+    for (var j = 0; j < dataA.length; j++) {
+      var rowA = dataA[j];
+      if (JSON.stringify(rowB) === JSON.stringify(rowA)) {
+        foundInA = true;
+        break;
+      }
+    }
+
+    if (!foundInA) {
+      sheetA.appendRow(rowB);
+    }
+  }
+}
