@@ -1,0 +1,16 @@
+function sheetToJson() {
+  var sheet = SpreadsheetApp.getActiveSheet();
+  var data = sheet.getDataRange().getValues();
+  var headers = data.shift();
+  
+  var json = data.map(function(row) {
+    var obj = {};
+    headers.forEach(function(header, index) {
+      obj[header] = row[index];
+    });
+    return obj;
+  });
+
+  Logger.log(JSON.stringify(json));
+  return json;
+}
