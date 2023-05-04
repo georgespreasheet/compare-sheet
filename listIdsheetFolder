@@ -1,0 +1,27 @@
+function listGoogleSheetsInFolderToSheet(folderId, outputSheetId) {
+  var sheetData = [];
+
+  function searchFilesInFolder(folder) {
+    var files = folder.getFilesByType(MimeType.GOOGLE_SHEETS);
+    
+    while (files.hasNext()) {
+      var file = files.next();
+      sheetData.push([file.getName(), file.getId()]);
+      Logger.log('Title: %s, ID: %s', file.getName(), file.getId());
+    }
+
+    // Recherche récursive dans les sous-dossiers
+    var subfolders = folder.getFolders();
+    while (subfolders.hasNext()) {
+      searchFilesInFolder(subfolders.next());
+    }
+  }
+
+  var rootFolder = DriveApp.getFolderById(folderId);
+  searchFilesInFolder(rootFolder);
+
+  // Écrire les données dans le fichier Google Sheets spécifié
+  var outputSheet = SpreadsheetApp.openById(outputSheetId).getActiveSheet();
+  outputSheet.clear();
+  outputSheet.getRange(1, 1, sheetData.length, 2).setValues(sheetData);
+}
