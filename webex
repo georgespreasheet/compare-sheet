@@ -1,0 +1,38 @@
+// Remplacez YOUR_WEBEX_API_KEY par la clé API que vous avez obtenue à l'étape 1
+var WEBEX_API_KEY = 'YOUR_WEBEX_API_KEY';
+
+function createWebexMeeting(meetingTitle, meetingStartTime, meetingEndTime) {
+  var url = 'https://webexapis.com/v1/meetings';
+  
+  var data = {
+    title: meetingTitle,
+    start: meetingStartTime,
+    end: meetingEndTime
+  };
+
+  var options = {
+    method: 'post',
+    headers: {
+      'Authorization': 'Bearer ' + WEBEX_API_KEY,
+      'Content-Type': 'application/json'
+    },
+    payload: JSON.stringify(data)
+  };
+
+  var response = UrlFetchApp.fetch(url, options);
+  return JSON.parse(response.getContentText());
+}
+
+function listWebexMeetings() {
+  var url = 'https://webexapis.com/v1/meetings';
+  
+  var options = {
+    method: 'get',
+    headers: {
+      'Authorization': 'Bearer ' + WEBEX_API_KEY
+    }
+  };
+
+  var response = UrlFetchApp.fetch(url, options);
+  return JSON.parse(response.getContentText());
+}
