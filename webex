@@ -1,4 +1,4 @@
-// Remplacez YOUR_WEBEX_API_KEY par la clé API que vous avez obtenue à l'étape 1
+De// Remplacez YOUR_WEBEX_API_KEY par la clé API que vous avez obtenue à l'étape 1
 var WEBEX_API_KEY = 'YOUR_WEBEX_API_KEY';
 
 function createWebexMeeting(meetingTitle, meetingStartTime, meetingEndTime) {
@@ -36,3 +36,6 @@ function listWebexMeetings() {
   var response = UrlFetchApp.fetch(url, options);
   return JSON.parse(response.getContentText());
 }
+function scheduleWebexMeeting() {
+  var meetingTitle = 'Réunion de test';
+  var meetingStartTime = new Date().
