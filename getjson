@@ -1,0 +1,24 @@
+function onEdit(e) {
+  var range = e.range;
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var cell = sheet.getActiveCell();
+
+  // Vérifiez si la cellule éditée est dans la colonne "Heure" (colonne A dans cet exemple)
+  if (range.getColumn() == 1) {
+    var file = DriveApp.getFileById('your-file-id');
+    var json = file.getBlob().getDataAsString();
+    var data = JSON.parse(json);
+    
+    // Suppose que votre fichier JSON a la structure suivante : {"heures": ["08:00", "09:00", "10:00", ...]}
+    var list = data.heures;
+    
+    // Ecriture des valeurs de la liste dans une plage cachée.
+    // Ici, nous supposons qu'il y a une plage cachée en colonne Z.
+    var hiddenRange = sheet.getRange('Z1:Z' + list.length);
+    hiddenRange.setValues(list.map(function(item) { return [item]; })); // Chaque item est enveloppé dans un tableau pour obtenir une matrice 2D
+
+    // Mettre à jour la validation de données pour la cellule.
+    var rule = SpreadsheetApp.newDataValidation().requireValueInRange(hiddenRange).build();
+    cell.setDataValidation(rule);
+  }
+}
